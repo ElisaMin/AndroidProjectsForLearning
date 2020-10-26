@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav"
+    app:startDestination="@id/mainFragment">
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="me.heizi.learning.contact.loging.ui.main.MainFragment"
+        android:label="main_fragment"
+        tools:layout="@layout/main_fragment" >
+        <action
+            android:id="@+id/addNewOne"
+            app:destination="@id/addFragment"
+            app:popUpTo="@id/mainFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_checkFragment"
+            app:destination="@id/checkFragment"
+            app:popUpTo="@id/mainFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/checkFragment"
+        android:name="me.heizi.learning.contact.loging.ui.check.CheckFragment"
+        android:label="check_fragment"
+        tools:layout="@layout/check_fragment" >
+        <argument
+            android:name="name"
+            app:argType="string"
+            android:defaultValue="defaultName" />
+        <argument
+            android:name="phone"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
+    <fragment
+        android:id="@+id/addFragment"
+        android:name="me.heizi.learning.contact.loging.ui.append.AddFragment"
+        android:label="add_fragment"
+        tools:layout="@layout/add_fragment" />
+</navigation>

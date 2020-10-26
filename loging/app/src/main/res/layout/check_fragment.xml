@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="me.heizi.learning.contact.loging.ui.check.CheckViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.check.CheckFragment">
+
+        <com.google.android.material.appbar.MaterialToolbar
+
+            android:id="@+id/toolbar_check"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:navigationIcon="@drawable/ic_baseline_chevron_left_24" />
+
+        <TextView
+            android:id="@+id/name_checked"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="18dp"
+            android:text="@{viewModel.name}"
+            android:textColor="?attr/textColor"
+            android:textSize="30sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_check" />
+
+        <ImageView
+            android:id="@+id/dosentMetterImageView"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+
+            android:layout_marginTop="16dp"
+            android:src="@drawable/ic_outline_local_phone_24"
+            app:layout_constraintStart_toStartOf="@+id/name_checked"
+            app:layout_constraintTop_toBottomOf="@+id/name_checked" />
+
+        <TextView
+            android:id="@+id/phoneNumberCheck"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="@={viewModel.phone}"
+            android:textColor="?textColor"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@+id/dosentMetterImageView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/dosentMetterImageView"
+            app:layout_constraintTop_toTopOf="@+id/dosentMetterImageView" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
