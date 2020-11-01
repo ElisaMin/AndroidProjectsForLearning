@@ -13,7 +13,6 @@ interface DataDao {
     fun _getAll():List<Phone>
     val all:List<Phone> get() = _getAll()
 
-    @Update()
     @Insert
     fun insert(vararg phones: Phone)
     @Delete

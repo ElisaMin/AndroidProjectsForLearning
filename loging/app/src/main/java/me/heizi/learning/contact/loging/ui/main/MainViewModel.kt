@@ -1,5 +1,6 @@
 package me.heizi.learning.contact.loging.ui.main
 
+import android.provider.ContactsContract
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
@@ -10,6 +11,7 @@ import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import me.heizi.learning.contact.loging.MainActivity.Companion.db
 import me.heizi.learning.contact.loging.MainActivity.Companion.mainActivity
+import me.heizi.learning.contact.loging.MainActivity.Companion.sharedViewModel
 import me.heizi.learning.contact.loging.R
 import me.heizi.learning.contact.loging.data.rooms.Phone
 import me.heizi.learning.contact.loging.databinding.ItemMainRcvBinding
@@ -21,7 +23,18 @@ class MainViewModel : ViewModel() {
     val adapter by lazy { Adapter() }
 
      inner class Adapter(): RecyclerView.Adapter<Adapter.ViewHolder>() {
-        val datas:List<Phone> get() = db.dataDao().all
+        val datas:List<Phone> get() = if(!sharedViewModel.isSystemContact) db.dataDao().all else ArrayList<Phone>().apply {
+            mainActivity.run {
+                contentResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,null,null,null,)?.apply {
+                    while (moveToNext()) {
+                        add(Phone(
+                            name  = getString(getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)),
+                            phone = getString(getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)),
+                        ))
+                    }
+                }?.close()
+            }
+        }
 
         inner class ViewHolder(val binding:ItemMainRcvBinding):RecyclerView.ViewHolder(binding.root)
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder = ViewHolder(ItemMainRcvBinding.inflate(layoutInflater!!,parent,false))

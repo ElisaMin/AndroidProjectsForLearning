@@ -1,9 +1,13 @@
 # Android 学习项目
 ### 更细日志
-
+###### 2020 1101
+```
+更新Contact LOGING:
+    接入系统Contact Provider
+```
 ###### 2020 1026
 ```
-更新Contract Loging：
+更新Contact Loging：
     使用Jetpack的:
         Room
         DataBinding
