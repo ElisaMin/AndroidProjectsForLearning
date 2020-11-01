@@ -9,6 +9,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <provider
+            android:authorities="me.heizi.learning.contact.provider"
+            android:name="me.heizi.learingsqlitehelper.Provider"
+            android:enabled="true"
+            android:exported="true"/>
         <activity android:name="me.heizi.learingsqlitehelper.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

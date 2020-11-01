@@ -2,6 +2,12 @@
 ### 更细日志
 ###### 2020 1101
 ```
+--晚上
+更新SqliteHelper:
+    增加Provider
+更新项目:Resolver
+    跨应用分享数据了。
+--中午
 更新Contact LOGING:
     接入系统Contact Provider
 ```
