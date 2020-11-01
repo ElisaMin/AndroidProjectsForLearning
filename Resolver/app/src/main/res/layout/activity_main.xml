@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+
+    <Button
+        android:id="@+id/insert"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:text="insert"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/create"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="createTable"
+        app:layout_constraintEnd_toEndOf="@+id/insert"
+        app:layout_constraintStart_toStartOf="@+id/insert"
+        app:layout_constraintTop_toBottomOf="@+id/insert" />
+
+    <Button
+        android:id="@+id/select"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="select"
+        app:layout_constraintEnd_toEndOf="@+id/create"
+        app:layout_constraintStart_toStartOf="@+id/create"
+        app:layout_constraintTop_toBottomOf="@+id/create" />
+
+    <Button
+        android:id="@+id/update"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="update name"
+        app:layout_constraintEnd_toEndOf="@+id/select"
+        app:layout_constraintStart_toStartOf="@+id/select"
+        app:layout_constraintTop_toBottomOf="@+id/select" />
+
+    <Button
+        android:id="@+id/delect"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="delect"
+        app:layout_constraintEnd_toEndOf="@+id/update"
+        app:layout_constraintStart_toStartOf="@+id/update"
+        app:layout_constraintTop_toBottomOf="@+id/update" />
+
+    <Button
+        android:id="@+id/selectSingle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:text="select by name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/delect" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
