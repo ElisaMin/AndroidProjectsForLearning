@@ -1,6 +1,25 @@
 # Android 学习项目
-### 更细日志
+
+## 文件夹所在的意义
+* MotionLayoutTesting 内部http服务器+room存储
+* Loging Jetpack和Provider相结合的练习项目
+* Resolver 上面的配套应用
+* paging paging3库测试项目
+* okPullParser OkHttp+XMLParser 无意义
+* SQLiteHelper 无意义
+
+## 更细日志
+###### 2020 1016
+```
+增加项目：paging
+    踩点paging3库
+新增项目：MotionLayoutTesting
+    未完成
+    用的最多的协程的应用
+    dataStore未生效
+```
 ###### 2020 1101
+
 ```
 --晚上
 更新SqliteHelper:
