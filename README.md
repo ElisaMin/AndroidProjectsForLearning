@@ -8,6 +8,9 @@
 * okPullParser OkHttp+XMLParser 无意义
 * SQLiteHelper 无意义
 
+## 项目地址
+* [gitee](https://gitee.com/elisamin/android-projects)
+* [github](https://github.com/ElisaMin/AndroidProjectsForLearning)
 ## 更细日志
 ###### 2020 1016
 ```

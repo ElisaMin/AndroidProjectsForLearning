@@ -17,7 +17,7 @@ import kotlin.concurrent.thread
 object SimpleHttpServer {
     private const val TAG = "SimpleHttpServer"    
     private const val data_json:String =
-"""[{'StoryName':'name','StoryContent':'content'}]"""
+"""[{'StoryName':'name','StoryContent':'content'},{'StoryName':'name1','StoryContent':'content2'}]"""
     private const val data_xml:String  =""
 
 

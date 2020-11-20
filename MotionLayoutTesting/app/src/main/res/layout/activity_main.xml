@@ -4,24 +4,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layoutDescription="@xml/activity_main_scene"
-    tools:context=".MainActivity"
     android:background="@drawable/background_default"
+    android:paddingHorizontal="14dp"
     android:paddingVertical="54dp"
-    android:paddingHorizontal="14dp">
+    app:layoutDescription="@xml/activity_main_scene"
+    tools:context=".MainActivity">
 
     <androidx.cardview.widget.CardView
-        android:layout_margin="10dp"
         android:id="@+id/cardView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_margin="10dp"
         app:cardBackgroundColor="#CBEDEDED"
         app:cardCornerRadius="16dp"
         app:cardElevation="9dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" >
+        app:layout_constraintTop_toTopOf="parent">
+
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"

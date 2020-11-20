@@ -9,6 +9,7 @@
         motion:duration="1000">
        <KeyFrameSet>
        </KeyFrameSet>
+        <OnSwipe motion:dragDirection="dragStart" />
     </Transition>
 
     <ConstraintSet android:id="@+id/start">
@@ -16,4 +17,9 @@
 
     <ConstraintSet android:id="@+id/end">
     </ConstraintSet>
+    <Transition
+        motion:constraintSetStart="@+id/end"
+        motion:constraintSetEnd="@+id/start" >
+        <OnSwipe motion:dragDirection="dragStart" />
+    </Transition>
 </MotionScene>
