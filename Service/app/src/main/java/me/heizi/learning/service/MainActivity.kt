@@ -1,11 +1,19 @@
 package me.heizi.learning.service
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
+import android.os.*
 import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import android.os.Environment
 import android.util.Log
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
+import androidx.core.app.NotificationCompat
+import androidx.lifecycle.LifecycleService
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.Default
@@ -16,14 +24,84 @@ import okhttp3.internal.wait
 import java.io.File
 import java.io.IOException
 import java.io.RandomAccessFile
+import java.net.URL
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
     }
 }
 
+
+
+class DownloadingService:LifecycleService () {
+
+    class Binder:android.os.Binder() {
+        fun start(url: String) {
+            URL(url)
+        }
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+    }
+}
+@ObsoleteCoroutinesApi
+class Service: LifecycleService() {
+
+
+    inner class Binder: android.os.Binder() {
+        val liveProgress = MutableLiveData(0)
+        fun startDownload(context:Context,url: String) = downloading.onStart(context, url)
+    }
+    companion object {
+        const val NOTIFICATION_ID = 11
+        const val CHANNEL_ID = "Downloading"
+        const val CHANNEL_NAME = "Downloader"
+
+    }
+    private val notificationManager get() = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+    private val binder = Binder()
+    private val downloading by lazy {
+        Downloading(
+                lifecycleScope,
+                onFall = { msg,e->
+                    stopForeground(true)
+//                    notificationManager.notify(NOTIFICATION_ID,)
+                    AlertDialog.Builder(this)
+                            .setTitle(msg)
+                            .also { b -> e?.let { b.setMessage(it.stackTraceToString()) } }
+                            .show()
+                },
+                onSuccess = {
+                    stopForeground(true)
+                },
+                onProgressChanged = { binder.liveProgress.value = it }
+        )
+    }
+    fun createNewNotification(
+            title:String,
+            showProgress:Boolean = true
+    ) = NotificationCompat.Builder(this, CHANNEL_ID).apply {
+        if (showProgress)
+            binder.liveProgress.observe(this@Service) {
+
+            }
+    }
+    override fun onBind(intent: Intent): IBinder? { super.onBind(intent);return binder }
+    override fun onCreate() {
+        super.onCreate()
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.O)
+            notificationManager.createNotificationChannel(
+                    NotificationChannel(CHANNEL_ID, CHANNEL_NAME,NotificationManager.IMPORTANCE_LOW)
+            )
+    }
+
+
+
+}
 @ObsoleteCoroutinesApi
 class Downloading(
         val coroutineScope: CoroutineScope,
@@ -44,7 +122,7 @@ class Downloading(
 
     var isPause = false
     var isCanceled = false
-    fun onStart(context:Context,url: String) {
+    fun onStart(context:Context,url: String):Downloading {
         coroutineScope.launch(IO) {
             //TODO:判断url是否合法
             try {
@@ -56,6 +134,7 @@ class Downloading(
                 onFall("URL不合法",e)
             }
         }
+        return this
     }
     private fun onCountingLength(url:String,file:File) {
         //TODO 异步获取响应
