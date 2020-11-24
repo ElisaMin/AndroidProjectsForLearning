@@ -14,7 +14,9 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.Main
 import me.heizi.learning.service.R
 import me.heizi.learning.service.services.DownloadingService.Statues.EMPTY_RESPONSE_BODY
+import me.heizi.learning.service.services.DownloadingService.Statues.JUST_ERROR
 import me.heizi.learning.service.services.DownloadingService.Statues.SUCCESS
+import me.heizi.learning.service.services.DownloadingService.Statues.UNKNOWN_ERROR
 import me.heizi.learning.service.services.DownloadingService.Statues.URL_NOT_ALLOW
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -31,25 +33,51 @@ class DownloadingService: LifecycleService() {
         const val EMPTY_RESPONSE_BODY = -404
         const val JUST_ERROR = -400
         const val SUCCESS = 101
+        const val UNKNOWN_ERROR = -430
+        const val PAUSE = -102
+        const val CANCEL = -103
     }
+    private var isStarted = false
     inner class Binder:android.os.Binder() {
         val liveState = MutableLiveData(0)
+
         lateinit var url: String
         lateinit var directory:String
+
         fun start(url: String, context: Context, lifecycleOwner: LifecycleOwner) {
-            Log.i(TAG, "start: called")
+            isStarted = true
+            //观察ErrorCode
             liveState.observe(lifecycleOwner,notificationObserver)
             try {
+                //测试URL是否合理
                 URL(url)
-                Log.i(TAG, "start: url is fine")
             } catch (e: MalformedURLException) {
-                liveState.value = Statues.URL_NOT_ALLOW
+                isStarted = false
+                //不合理时ERROR CODE为 URL_NOT_ALLOW
+                liveState.value = URL_NOT_ALLOW
                 return
             }
-
+            //赋值
             this.url = url
             this.directory = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)!!.path
-            onDownloading()
+            //捕获异常
+            try {
+                onDownloading()
+            }catch (e:Exception) {
+                e.printStackTrace()
+                //异常
+                isStarted =false
+                onFailed(e.message?:"未知错误", UNKNOWN_ERROR)
+            }
+        }
+
+        fun cancel():Boolean = run {
+            if (isStarted) {isCanceled = true}
+            isCanceled
+        }
+        fun pause ()= kotlin.run {
+            if (isStarted) isPause = true
+            isPause
         }
     }
     val binder = Binder()
@@ -67,6 +95,8 @@ class DownloadingService: LifecycleService() {
     private val okhttp by lazy { client.dispatcher.executorService.asCoroutineDispatcher() }
 
     fun onDownloading () {
+        isPause = false
+        isCanceled = false
         Log.i(TAG, "onDownloading: called ${binder.directory}")
         lifecycleScope.launch(Main) {
         }
@@ -80,6 +110,9 @@ class DownloadingService: LifecycleService() {
         lifecycleScope.launch(Dispatchers.IO) IO@{
             Log.i(TAG, "onDownloading: blocking io")
             file = File("${binder.directory}/${binder.url.substring(binder.url.lastIndexOf('/'))}")
+            val _fileWriting= lifecycleScope.async (Dispatchers.Main) {
+                RandomAccessFile(file!!,"rw").also { it.seek(lengthLocal) }
+            }
             lengthNetwork = _response.await().body?.contentLength() ?:-1
             if (file!!.exists()) {
                 lengthLocal = file!!.length()
@@ -101,12 +134,11 @@ class DownloadingService: LifecycleService() {
                 }
                 else -> Unit
             }
+            fileWriting = _fileWriting.await()
             response = withContext (okhttp) {
                 client.newCall(Request.Builder().addHeader("RANGE","byte=$lengthLocal").url(url).build()).execute()
             }
-            fileWriting = withContext(Dispatchers.Main) {
-                RandomAccessFile(file!!,"rw").also { it.seek(lengthLocal) }
-            }
+
 
             if (response?.body == null) {
                 onFailed(reason = "网络错误", errorCode = EMPTY_RESPONSE_BODY)
@@ -138,9 +170,6 @@ class DownloadingService: LifecycleService() {
                 __file.length() == lengthNetwork -> onSuccess()
                 else -> onFailed("未知错误")
             }
-            //跳转原因
-
-
         }
     }
     companion object {
@@ -171,28 +200,43 @@ class DownloadingService: LifecycleService() {
                     setContentTitle("下载成功")
                     setContentText("看看都下载了什么吧！")
                 }
+                JUST_ERROR -> {
+                    setContentTitle("下载失败！")
+                    setContentText("原因：$errorReason")
+                }
                 EMPTY_RESPONSE_BODY ->{
                     setContentTitle("网络异常")
                     setContentText("原因：$errorReason")
+                }
+                UNKNOWN_ERROR ->{
+                    setContentTitle("下载异常")
+                    setContentText("未知：$errorReason")
                 }
             }
         }.build()
         notificationManager.notify(NOTIFICATION_ID,n)
     }
+    //取消
     fun onCancel() {
-
+        isCanceled = true
         onClean(true)
     }
+    //暂停
     fun onPause(){
+        isPause = true
     }
     fun onSuccess() = lifecycleScope.launch(Main){
+        isStarted = false
         binder.liveState.value = SUCCESS
+        onClean(false)
     }
     fun onFailed(reason:String?=null,errorCode:Int=Statues.JUST_ERROR) {
+        isStarted = false
         errorReason=reason
         binder.liveState.value = errorCode
         onClean(true)
     }
+    //清理空间
     fun onClean(byFailedOrCancel:Boolean=false) {
         response?.close()
         fileWriting?.close()
